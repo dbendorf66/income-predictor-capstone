@@ -1,0 +1,13 @@
+.venv/
+.git/
+.env
+data/
+mlflow.db
+mlruns/
+mlartifacts/
+tests/
+notebooks/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+"Adult Income Dataset"/

@@ -1,0 +1,28 @@
+# Data and model artifacts must never be committed (see project spec)
+data/*
+!data/.gitkeep
+models/*
+!models/.gitkeep
+
+# MLflow local tracking store
+mlflow.db
+mlruns/
+mlartifacts/
+
+# Secrets
+.env
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

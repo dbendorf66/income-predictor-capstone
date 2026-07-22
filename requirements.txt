@@ -1,0 +1,23 @@
+# Pinned to the versions this project was developed and tested against.
+# Python 3.13 (3.14 is not yet reliable for mlflow/xgboost wheels).
+
+# Data and modeling
+pandas==2.3.3
+numpy==2.5.1
+scikit-learn==1.9.0
+xgboost==3.3.0
+joblib==1.5.3
+
+# Experiment tracking
+mlflow==3.14.0
+
+# LLM interface
+anthropic==0.117.1
+streamlit==1.60.0
+python-dotenv==1.2.2
+
+# Configuration
+PyYAML==6.0.3
+
+# Testing
+pytest==9.1.1

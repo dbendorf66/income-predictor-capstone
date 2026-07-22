@@ -1,0 +1,117 @@
+# Training configuration for the Adult Income capstone.
+# The training script reads every hyperparameter from this file — nothing is
+# hardcoded in src/train.py.
+
+data:
+  # Path to the raw dataset. A directory loads and concatenates the UCI
+  # `adult.data` + `adult.test` files (48,842 rows total); a single file path
+  # also works, headered or not.
+  path: data/
+  target: income
+  # Value in the raw file that means "missing". UCI uses a literal "?".
+  na_value: "?"
+  # Label that counts as the positive class (income > $50K).
+  positive_label: ">50K"
+  test_size: 0.2
+  random_state: 42
+
+preprocessing:
+  # Dropped: it is a census sampling weight, not a property of the person.
+  # Keeping it leaks survey design into the model and hurts interpretability.
+  drop_columns:
+    - fnlwgt
+    # education-num is an exact ordinal duplicate of education; keeping both
+    # double-counts the same signal.
+    - education-num
+  numeric_features:
+    - age
+    - capital-gain
+    - capital-loss
+    - hours-per-week
+  categorical_features:
+    - workclass
+    - education
+    - marital-status
+    - occupation
+    - relationship
+    - race
+    - sex
+    - native-country
+  numeric_imputer: median
+  categorical_imputer: most_frequent
+  scaler: standard
+
+mlflow:
+  # MLflow 3.x put the plain-file store into maintenance mode and refuses to
+  # use it, so tracking metadata lives in a local SQLite database. Artifacts
+  # still land on disk under ./mlartifacts. Both are gitignored.
+  tracking_uri: sqlite:///mlflow.db
+  experiment_name: adult-income-capstone
+
+# Each entry becomes one MLflow run. Five meaningfully different
+# configurations: different algorithms and different hyperparameters, not
+# reseeds of the same model.
+experiments:
+  - name: logistic_regression_baseline
+    model_type: logistic_regression
+    params:
+      C: 1.0
+      max_iter: 1000
+      class_weight: null
+      random_state: 42
+
+  - name: logistic_regression_balanced
+    model_type: logistic_regression
+    params:
+      C: 0.1
+      max_iter: 1000
+      class_weight: balanced
+      random_state: 42
+
+  - name: random_forest_shallow
+    model_type: random_forest
+    params:
+      n_estimators: 200
+      max_depth: 10
+      min_samples_leaf: 5
+      n_jobs: -1
+      random_state: 42
+
+  - name: random_forest_deep
+    model_type: random_forest
+    params:
+      n_estimators: 500
+      max_depth: 25
+      min_samples_leaf: 2
+      n_jobs: -1
+      random_state: 42
+
+  - name: gradient_boosting
+    model_type: gradient_boosting
+    params:
+      n_estimators: 300
+      learning_rate: 0.1
+      max_depth: 3
+      random_state: 42
+
+  - name: xgboost_tuned
+    model_type: xgboost
+    params:
+      n_estimators: 400
+      learning_rate: 0.05
+      max_depth: 6
+      subsample: 0.8
+      colsample_bytree: 0.8
+      eval_metric: logloss
+      random_state: 42
+
+evaluation:
+  # Metric used to pick the best run. F1 balances precision and recall on a
+  # class-imbalanced target (~24% positive).
+  primary_metric: f1
+  # Guard rail used by tests/test_model.py.
+  min_accuracy: 0.80
+
+output:
+  model_dir: models
+  best_model_name: best_model.joblib
