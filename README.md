@@ -13,6 +13,10 @@ way they'd ask a person while the prediction still comes from the real model.
 **Who it's for.** Anyone who wants a model's answer without learning its schema —
 and, as a reference, anyone building an LLM front-end over a tabular model.
 
+**📹 Demo.** A short screen recording walking through a live prediction, an
+incomplete-input edge case, and an out-of-scope query is attached to the
+[v1.0 release](https://github.com/dbendorf66/income-predictor-capstone/releases/tag/v1.0).
+
 ---
 
 ## Architecture
